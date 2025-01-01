@@ -139,19 +139,21 @@ async def utilities_help(client, callback_query: CallbackQuery):
         )
     )
 
-# Callback query handler for other help sections
-@app.on_callback_query(filters.regex("^(paste|extra)$"))
-async def help_callback(client, callback_query: CallbackQuery):
-    data = callback_query.data
+# Callback query handler for the "Extra" button
+@app.on_callback_query(filters.regex("^extra$"))
+async def extra_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Extra Features ⚙️</b>
+<b>Note:</b> The Extra features include various additional tools and functionalities.
 
-    if data == "paste":
-        text = "Paste: Here is how to use the paste feature."
-    elif data == "extra":
-        text = "Extra: Here are additional features."
-
+<b>Commands and Usage:</b>
+• /extra <command> - <code>Use specific extra commands.</code>
+• /extra list - <code>List all available extra commands.</code>
+"""
     await callback_query.message.edit(
         text=text,
-        reply_markup=HELP_BUTTONS  # Optionally add back the buttons
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
+        )
     )
 
 # Run the bot
