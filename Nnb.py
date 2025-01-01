@@ -1,9 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 
-# Initialize the bot
-app = Client("my_bot")
-
 # Define HELP_BUTTONS with emoji support
 HELP_BUTTONS = InlineKeyboardMarkup(
     [
@@ -26,7 +23,7 @@ HELP_BUTTONS = InlineKeyboardMarkup(
 )
 
 # Command to show the help menu
-@app.on_message(filters.command("help") & filters.private)
+@Client.on_message(filters.command("help") & filters.private)
 async def show_help(client, message: Message):
     await message.reply(
         "Choose a category from the help menu below 👇:",
@@ -34,15 +31,19 @@ async def show_help(client, message: Message):
     )
 
 # Callback query handler for the "Paste" button
-@app.on_callback_query(filters.regex("^paste$"))
+@Client.on_callback_query(filters.regex("^paste$"))
 async def paste_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Paste Feature 📋</b>
 <b>Note:</b> The Paste feature allows you to quickly paste and share various content.
 
 <b>Commands and Usage:</b>
 • /paste <text> - <code>Paste text into the chat.</code>
-• /paste link <url> - <code>Share a link as pasted content.</code>
-• /paste file <file_name> - <code>Upload a file as pasted content.</code>
+• /rentry <text> - <code>Paste text into the chat.</code>
+• /imgbb <text> - <code>Paste img into the chat.</code>
+• /neko <txt> - <code> pasted content neko.</code>
+• /sbin <txt> - <code>Upload a file as pasted content.</code>
+• /upload <text> - <code>Paste img into the chat.</code>
+• /telegraph <text> - <code>Paste img into the chat.</code>
 """
     await callback_query.message.edit(
         text=text,
@@ -52,13 +53,13 @@ async def paste_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "Mise" button
-@app.on_callback_query(filters.regex("^mise$"))
+@Client.on_callback_query(filters.regex("^mise$"))
 async def mise_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Mise Feature 📝</b>
 <b>Note:</b> The Mise feature allows you to manage your mise tasks efficiently.
 
 <b>Commands and Usage:</b>
-• /mise <task> - <code>To start a new mise task.</code>
+• /mongochk <task> - <code>To start a new mise task.</code>
 • /mise status - <code>To check the status of your current task.</code>
 • /mise cancel - <code>To cancel an ongoing task.</code>
 """
@@ -70,7 +71,7 @@ async def mise_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "AI" button
-@app.on_callback_query(filters.regex("^ai$"))
+@Client.on_callback_query(filters.regex("^ai$"))
 async def ai_help(client, callback_query: CallbackQuery):
     text = """<b>Help: AI Tools 🤖</b>
 <b>Note:</b> The AI tools are used to get responses from various AI sources.
@@ -89,7 +90,7 @@ async def ai_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "Device" button
-@app.on_callback_query(filters.regex("^device$"))
+@Client.on_callback_query(filters.regex("^device$"))
 async def device_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Device Information 📱</b>
 <b>Note:</b> Use this feature to get information about various devices, specifications, and comparisons.
@@ -106,7 +107,7 @@ async def device_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "Dictionary" button
-@app.on_callback_query(filters.regex("^dictionary$"))
+@Client.on_callback_query(filters.regex("^dictionary$"))
 async def dictionary_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Dictionary Feature 📚</b>
 <b>Note:</b> Use this feature to search for word definitions and translations.
@@ -123,7 +124,7 @@ async def dictionary_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "Utilities" button
-@app.on_callback_query(filters.regex("^utilities$"))
+@Client.on_callback_query(filters.regex("^utilities$"))
 async def utilities_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Utilities Tools 🔧</b>
 <b>Note:</b> Use various tools to perform calculations, conversions, and more.
@@ -140,7 +141,7 @@ async def utilities_help(client, callback_query: CallbackQuery):
     )
 
 # Callback query handler for the "Extra" button
-@app.on_callback_query(filters.regex("^extra$"))
+@Client.on_callback_query(filters.regex("^extra$"))
 async def extra_help(client, callback_query: CallbackQuery):
     text = """<b>Help: Extra Features ⚙️</b>
 <b>Note:</b> The Extra features include various additional tools and functionalities.
