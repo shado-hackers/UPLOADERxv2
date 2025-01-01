@@ -1,114 +1,78 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 
-# Help Buttons Layout
+# Initialize the bot
+app = Client("my_bot")
+
+# Define HELP_BUTTONS with emoji support
 HELP_BUTTONS = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton("🛠 Mise", callback_data="mise"),
+            InlineKeyboardButton("📝 Mise", callback_data="mise"),
+            InlineKeyboardButton("🖼️ ImgEdit", callback_data="imgeedit"),
+            InlineKeyboardButton("🔍 Search", callback_data="search"),
+        ],
+        [
+            InlineKeyboardButton("📋 Paste", callback_data="paste"),
+            InlineKeyboardButton("⚙️ Extra", callback_data="extra"),
             InlineKeyboardButton("🤖 AI", callback_data="ai"),
         ],
         [
-            InlineKeyboardButton("💻 Device", callback_data="device"),
-            InlineKeyboardButton("🛠️ Tools", callback_data="tools"),
-        ],
-        [
-            InlineKeyboardButton("🖥️ System", callback_data="system"),
-            InlineKeyboardButton("🔍 Search", callback_data="search"),
-            InlineKeyboardButton("📖 Dictionary", callback_data="dictionary"),
-        ],
-        [
-            InlineKeyboardButton("🌐 General", callback_data="general"),
-            InlineKeyboardButton("🗺️ Maps", callback_data="maps"),
-        ],
-        [
+            InlineKeyboardButton("📱 Device", callback_data="device"),
+            InlineKeyboardButton("📚 Dictionary", callback_data="dictionary"),
             InlineKeyboardButton("🔧 Utilities", callback_data="utilities"),
-        ],
-        [
-            InlineKeyboardButton("🔙 Back", callback_data="back"),
-            InlineKeyboardButton("❌ Close", callback_data="close"),
         ],
     ]
 )
 
-# Define the HELP_TEXT here
-HELP_TEXT = """<b>Welcome to the Bot Help Menu!</b>
-Here are the features and commands available:
-
-<b>Main Features:</b>
-- 🛠 Mise
-- 🤖 AI
-- 💻 Device
-- 🛠️ Tools
-- 🖥️ System
-- 🔍 Search
-- 📖 Dictionary
-- 🌐 General
-- 🗺️ Maps
-- 🔧 Utilities
-
-Use the buttons below to explore more categories."""
-
-@Client.on_message(filters.command(["help"]))
-async def help(bot, update):
-    await update.reply_text(
-        text=HELP_TEXT,
-        disable_web_page_preview=True,
+# Command to show the help menu
+@app.on_message(filters.command("help") & filters.private)
+async def show_help(client, message: Message):
+    await message.reply(
+        "Choose a category from the help menu below 👇:",
         reply_markup=HELP_BUTTONS
     )
 
-@Client.on_callback_query()
-async def handle_callback_query(bot, update):
-    data = update.data
-
-    if data == "mise":
-        await update.edit_message_text(
-            text="""<b>Help: Extra Modules</b>
-<b>Note:</b> These are additional features available in the bot.
+# Callback query handler for the "Paste" button
+@app.on_callback_query(filters.regex("^paste$"))
+async def paste_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Paste Feature 📋</b>
+<b>Note:</b> The Paste feature allows you to quickly paste and share various content.
 
 <b>Commands and Usage:</b>
-• /id - Get the ID of a specific user.
-• /info - Get information about a user.
-• /imdb - Get film information from IMDb.
-• /search - Get film information from various sources.
-
-<b>AI Tools:</b>
-• /gojo <query> - Use Gojo AI (supports photos & stickers).
-• /gpt <query> - Get a response from ChatGPT.
-• /groq <query> - Get a response from Groq AI.
-• /google or /gemini <query> - Get a response from Gemini AI PRO.
-
-<b>Image Generation:</b>
-• /draw <query> - Generate an image from a text description.
-• /imagine <query> - Generate an image from a text description.
-• /art <query> - Generate an artistic image from text.
-• /bdraw <query> - Generate an image using the Blackbox model.
-            """,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("🔙 Back", callback_data="back")]]
-            ),
-            disable_web_page_preview=True
+• /paste <text> - <code>Paste text into the chat.</code>
+• /paste link <url> - <code>Share a link as pasted content.</code>
+• /paste file <file_name> - <code>Upload a file as pasted content.</code>
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "search":
-        await update.edit_message_text(
-            text="""<b>Help: Search Tools</b>
-<b>Note:</b> Use these commands to perform searches for various categories.
+    )
+
+# Callback query handler for the "Mise" button
+@app.on_callback_query(filters.regex("^mise$"))
+async def mise_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Mise Feature 📝</b>
+<b>Note:</b> The Mise feature allows you to manage your mise tasks efficiently.
 
 <b>Commands and Usage:</b>
-• /google <query> - <code>Search on Google.</code>
-• /bing <query> - <code>Search on Bing.</code>
-• /yahoo <query> - <code>Search on Yahoo.</code>
-• /wiki <query> - <code>Search on Wikipedia.</code>
-• /youtube <query> - <code>Search for videos on YouTube.</code>
-            """,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("🔙 Back", callback_data="back")]]
-            ),
-            disable_web_page_preview=True
+• /mise <task> - <code>To start a new mise task.</code>
+• /mise status - <code>To check the status of your current task.</code>
+• /mise cancel - <code>To cancel an ongoing task.</code>
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "ai":
-        await update.edit_message_text(
-            text="""<b>Help: AI Tools</b>
+    )
+
+# Callback query handler for the "AI" button
+@app.on_callback_query(filters.regex("^ai$"))
+async def ai_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: AI Tools 🤖</b>
 <b>Note:</b> The AI tools are used to get responses from various AI sources.
 
 <b>Commands and Usage:</b>
@@ -116,50 +80,79 @@ async def handle_callback_query(bot, update):
 • /gpt <query> - <code>Get a response from ChatGPT.</code>
 • /groq <query> - <code>Get a response from Groq AI.</code>
 • /google or /gemini <query> - <code>Get a response from Gemini AI PRO.</code>
-            """,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("🔙 Back", callback_data="back")]]
-            ),
-            disable_web_page_preview=True
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "device":
-        await update.edit_message_text(
-            text="""<b>Help: Device Tools</b>
-<b>Note:</b> These commands help you retrieve device-related information.
+    )
+
+# Callback query handler for the "Device" button
+@app.on_callback_query(filters.regex("^device$"))
+async def device_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Device Information 📱</b>
+<b>Note:</b> Use this feature to get information about various devices, specifications, and comparisons.
 
 <b>Commands and Usage:</b>
-• /deviceinfo <device_name> - <code>Get detailed information about a device.</code>
-• /specs <device_name> - <code>Fetch specifications for a device.</code>
+• /device <model> - <code>Get details about a device.</code>
 • /compare <device1> <device2> - <code>Compare two devices.</code>
-            """,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("🔙 Back", callback_data="back")]]
-            ),
-            disable_web_page_preview=True
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "tools":
-        await update.edit_message_text(
-            text="""<b>Help: Tools</b>
-<b>Note:</b> These are utility tools available in the bot.
+    )
+
+# Callback query handler for the "Dictionary" button
+@app.on_callback_query(filters.regex("^dictionary$"))
+async def dictionary_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Dictionary Feature 📚</b>
+<b>Note:</b> Use this feature to search for word definitions and translations.
 
 <b>Commands and Usage:</b>
-• /calculator <expression> - <code>Perform calculations directly in chat.</code>
-• /convert <value> <unit> - <code>Convert units (e.g., cm to inches).</code>
-• /qr <text> - <code>Generate a QR code for the given text.</code>
-• /barcode <text> - <code>Generate a barcode for the given text.</code>
-• /shorten <url> - <code>Shorten a given URL using a URL shortener service.</code>
-            """,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("🔙 Back", callback_data="back")]]
-            ),
-            disable_web_page_preview=True
+• /define <word> - <code>Get the definition of a word.</code>
+• /translate <word> - <code>Translate a word into another language.</code>
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "back":
-        await update.edit_message_text(
-            text=HELP_TEXT,
-            reply_markup=HELP_BUTTONS
+    )
+
+# Callback query handler for the "Utilities" button
+@app.on_callback_query(filters.regex("^utilities$"))
+async def utilities_help(client, callback_query: CallbackQuery):
+    text = """<b>Help: Utilities Tools 🔧</b>
+<b>Note:</b> Use various tools to perform calculations, conversions, and more.
+
+<b>Commands and Usage:</b>
+• /calculator <expression> - <code>Perform a calculation.</code>
+• /convert <value> <unit1> <unit2> - <code>Convert units (e.g., km to miles).</code>
+"""
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("🔙 Back", callback_data="help")]]  # Back button to return to the help menu
         )
-    elif data == "close":
-        await update.message.delete()
-    else:
-        await update.answer("❗ Invalid option selected!", show_alert=True)
+    )
+
+# Callback query handler for other help sections
+@app.on_callback_query(filters.regex("^(paste|extra)$"))
+async def help_callback(client, callback_query: CallbackQuery):
+    data = callback_query.data
+
+    if data == "paste":
+        text = "Paste: Here is how to use the paste feature."
+    elif data == "extra":
+        text = "Extra: Here are additional features."
+
+    await callback_query.message.edit(
+        text=text,
+        reply_markup=HELP_BUTTONS  # Optionally add back the buttons
+    )
+
+# Run the bot
+app.run()
